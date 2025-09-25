@@ -1,0 +1,6 @@
+@DiagnosticsTool_HostAddress = http://localhost:5209
+
+GET {{DiagnosticsTool_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
