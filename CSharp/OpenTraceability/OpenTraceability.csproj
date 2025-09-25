@@ -53,6 +53,21 @@
 		<EmbeddedResource Include="Utility\Data\Countries.xml" />
 		<EmbeddedResource Include="Utility\Data\EPCISJsonContext.jsonld" />
 		<EmbeddedResource Include="Utility\Data\uoms.json" />
+		<EmbeddedResource Include="..\..\docs\epcis\epcis_schema.json">
+			<Link>Utility\Data\epcis_schema.json</Link>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="..\..\docs\gdst\gdst_json_schema.json">
+			<Link>Utility\Data\gdst_json_schema.json</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="..\..\docs\gdst\gdst_openapi.yaml">
+			<Link>Utility\Data\gdst_openapi.yaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="..\..\docs\beefleather\beefleather_openapi.yaml">
+			<Link>Utility\Data\beefleather_openapi.yaml</Link>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>

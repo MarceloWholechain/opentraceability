@@ -27,6 +27,18 @@ namespace OpenTraceability.Utility
                         schemaStr = loader.ReadString("OpenTraceability", "OpenTraceability.Utility.Data.EPCISJsonSchema.jsonld");
                         _schemaCache.TryAdd(schemaURL, schemaStr);
                     }
+                    else if (schemaURL == "GDST")
+                    {
+                        EmbeddedResourceLoader loader = new EmbeddedResourceLoader();
+                        schemaStr = loader.ReadString("OpenTraceability", "OpenTraceability.Utility.Data.gdst_json_schema.json");
+                        _schemaCache.TryAdd(schemaURL, schemaStr);
+                    }
+                    else if (schemaURL == "EPCIS_BASE")
+                    {
+                        EmbeddedResourceLoader loader = new EmbeddedResourceLoader();
+                        schemaStr = loader.ReadString("OpenTraceability", "OpenTraceability.Utility.Data.epcis_schema.json");
+                        _schemaCache.TryAdd(schemaURL, schemaStr);
+                    }
                     else
                     {
                         using (HttpClient client = new HttpClient())

@@ -1,0 +1,45 @@
+{
+  "@context": [
+    "https://ref.gs1.org/standards/epcis/epcis-context.jsonld",
+    {
+      "gdst": "https://traceability-dialogue.org/epcis"
+    },
+    {
+      "cbvmda": "urn:epcglobal:cbv:mda"
+    }
+  ],
+  "type": "EPCISDocument",
+  "creationDate": "2022-09-05T19:04:37.5450000+00:00",
+  "schemaVersion": "2.0",
+  "epcisBody": {
+    "eventList": [
+      {
+        "type": "TransformationEvent",
+  "eventTime": "2022-01-19T11:09:54.5490000+00:00",
+  "eventTimeZoneOffset": "+00:00",
+  "inputQuantityList": [
+    {
+      "epcClass": "urn:test:input",
+      "quantity": 1000.0,
+      "uom": "KGM"
+    }
+  ],
+  "outputQuantityList": [
+    {
+      "epcClass": "urn:test:output",
+      "quantity": 1000.0,
+      "uom": "KGM"
+    }
+  ],
+  "bizStep": "urn:gdst:bizStep:farmHarvest",
+  "ilmd": {
+    "cbvmda:productionMethodForFishAndSeafoodCode": "AQUACULTURE",
+    "cbvmda:lotNumber": "TEST123"
+  },
+        "gdst:productOwner": "urn:test:party",
+        "gdst:humanWelfarePolicy": "3P Audit",
+        "cbvmda:informationProvider": "urn:test:party"
+      }
+    ]
+  }
+}

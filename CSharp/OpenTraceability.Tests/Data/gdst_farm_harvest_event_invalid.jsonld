@@ -1,0 +1,49 @@
+{
+  "@context": [
+    "https://ref.gs1.org/standards/epcis/epcis-context.jsonld",
+    {
+      "gdst": "https://traceability-dialogue.org/epcis"
+    },
+    {
+      "cbvmda": "urn:epcglobal:cbv:mda"
+    }
+  ],
+  "type": "EPCISDocument",
+  "creationDate": "2022-09-05T19:04:37.5450000+00:00",
+  "schemaVersion": "2.0",
+  "epcisBody": {
+    "eventList": [
+      {
+        "type": "TransformationEvent",
+        "eventTime": "2022-01-19T11:09:54.5490000+00:00",
+        "eventTimeZoneOffset": "+00:00",
+        "eventID": "urn:uuid:a3377b60-6663-4a39-9456-a32b166ffc4dU",
+        "inputQuantityList": [
+          {
+            "epcClass": "urn:gdst:example.org:product:lot:class:feedmill.1u.ff11252021",
+            "quantity": 10000.0,
+            "uom": "KGM"
+          }
+        ],
+        "outputQuantityList": [
+          {
+            "epcClass": "urn:gdst:example.org:product:lot:class:fishfarm.1u.farmed-tuna-01192022",
+            "quantity": 12000.0,
+            "uom": "KGM"
+          }
+        ],
+        "bizStep": "urn:gdst:bizStep:farmHarvest",
+        "disposition": "active",
+        "bizLocation": {
+          "id": "urn:gdst:example.org:location:loc:fishfarm.1u"
+        },
+        "ilmd": {
+          "cbvmda:productionMethodForFishAndSeafoodCode": "INVALID_PRODUCTION_METHOD",
+          "cbvmda:lotNumber": "FARMED-TUNA-01192022"
+        },
+        "gdst:productOwner": "urn:gdst:example.org:party:fishfarm.1u",
+        "cbvmda:informationProvider": "urn:gdst:example.org:party:fishfarm.1u"
+      }
+    ]
+  }
+}
