@@ -371,7 +371,7 @@ public final class EPCISDocumentBaseJsonMapper
 					val = StringExtensions.Last(val.split(java.util.regex.Pattern.quote("-"), -1));
 					return val;
 				}
-				else if (val.startsWith("https://gs1.org/voc/"))
+				else if (val.startsWith("https://gs1.org/voc/") || val.startsWith("https://ref.gs1.org/voc/"))
 				{
 					val = StringExtensions.Last(val.split(java.util.regex.Pattern.quote("/"), -1));
 					return val;

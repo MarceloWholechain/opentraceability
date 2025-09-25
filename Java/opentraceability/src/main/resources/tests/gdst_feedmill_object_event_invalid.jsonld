@@ -1,0 +1,46 @@
+{
+  "@context": [
+    "https://ref.gs1.org/standards/epcis/epcis-context.jsonld",
+    {
+      "gdst": "https://traceability-dialogue.org/epcis"
+    },
+    {
+      "cbvmda": "urn:epcglobal:cbv:mda"
+    }
+  ],
+  "type": "EPCISDocument",
+  "creationDate": "2022-09-05T19:04:37.5450000+00:00",
+  "schemaVersion": "2.0",
+  "epcisBody": {
+    "eventList": [
+      {
+        "type": "ObjectEvent",
+        "eventTime": "2021-02-03T11:10:00.0000000+00:00",
+        "eventTimeZoneOffset": "+00:00",
+        "eventID": "urn:uuid:f031d6ec-dfc5-4660-8047-003f5ab17512U",
+        "action": "ADD",
+        "bizStep": "commissioning",
+        "disposition": "active",
+        "bizLocation": {
+          "id": "urn:gdst:example.org:location:loc:feedmill.1u"
+        },
+        "quantityList": [
+          {
+            "epcClass": "urn:gdst:example.org:product:lot:class:feedmill.1u.ff11252021",
+            "quantity": 10000.0,
+            "uom": "KGM"
+          }
+        ],
+        "ilmd": {
+          "cbvmda:itemExpirationDate": "2022-02-03T03:00:00.0000000+00:00",
+          "cbvmda:productionDate": "2022-02-03T03:00:00.0000000+00:00",
+          "cbvmda:countryOfOrigin": "US",
+          "cbvmda:lotNumber": "FF11252021"
+        },
+        "gdst:productOwner": "urn:gdst:example.org:party:feedmill.1u",
+        "gdst:humanWelfarePolicy": "3P Audit",
+        "cbvmda:informationProvider": "urn:gdst:example.org:party:feedmill.1u"
+      }
+    ]
+  }
+}
