@@ -3,12 +3,12 @@ using OpenTraceability.Models.Events;
 
 namespace OpenTraceability.Queries
 {
-    public class EPCISQueryResults
+	public class EPCISQueryResults
 	{
 		/// <summary>
 		/// A summary of all of the EPCIS events.
 		/// </summary>
-		public EPCISQueryDocument Document { get; set; }
+		public EPCISQueryDocument? Document { get; set; } = null;
 
 		/// <summary>
 		/// A summary of all HTTP requests that were performed while resolving
@@ -38,8 +38,8 @@ namespace OpenTraceability.Queries
 			}
 			else if (results.Document != null)
 			{
-                this.Document.Merge(results.Document);
-            }
+				this.Document.Merge(results.Document);
+			}
 		}
 	}
 }

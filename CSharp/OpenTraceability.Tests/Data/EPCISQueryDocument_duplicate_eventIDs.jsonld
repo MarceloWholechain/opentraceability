@@ -1,0 +1,33 @@
+{
+  "@context": ["https://ref.gs1.org/standards/epcis/epcis-context.jsonld"],
+  "type": "EPCISQueryDocument",
+  "epcisBody": {
+    "queryResults": {
+      "queryName": "SimpleEventQuery",
+      "resultsBody": {
+        "eventList": [
+          {
+            "type": "ObjectEvent",
+            "action": "ADD",
+            "bizStep": "commissioning",
+            "disposition": "active",
+            "eventTime": "2024-01-01T00:00:00Z",
+            "eventTimeZoneOffset": "+00:00",
+            "eventID": "urn:uuid:11111111-1111-1111-1111-111111111111"
+          },
+          {
+            "type": "ObjectEvent",
+            "action": "ADD",
+            "bizStep": "commissioning",
+            "disposition": "active",
+            "eventTime": "2024-01-01T00:01:00Z",
+            "eventTimeZoneOffset": "+00:00",
+            "eventID": "urn:uuid:11111111-1111-1111-1111-111111111111"
+          }
+        ]
+      }
+    }
+  },
+  "schemaVersion": "2.0",
+  "creationDate": "2024-01-01T00:00:00Z"
+}

@@ -1,154 +1,80 @@
-# DiagnosticsTool API
+# Diagnostics Tool
 
-A comprehensive cross-platform ASP.NET Core Web API for system and application diagnostics, built with .NET 9.
+An open-source diagnostic tool designed to help identify and resolve real-time data transmission issues between traceability systems. This tool provides a neutral, transparent way to assess data structure correctness, API functionality, and identify common issues like formatting errors or protocol mismatches.
 
-## Features
+## Overview
 
-- **System Information**: Get detailed OS, hardware, and environment information
-- **Runtime Diagnostics**: Monitor .NET runtime, memory usage, and garbage collection
-- **Assembly Information**: Inspect loaded assemblies and their metadata
-- **Performance Metrics**: Real-time CPU usage and performance monitoring
-- **Environment Variables**: Access to system and application environment variables
-- **Health Checks**: Built-in health monitoring endpoints
-- **Swagger/OpenAPI**: Interactive API documentation
-- **Docker Support**: Full containerization with multi-stage builds
+The Diagnostics Tool addresses the challenge that even when traceability systems have passed Capability Tests, certification doesn't always guarantee seamless interoperability. When data exchange fails, it can be difficult to pinpoint whether the problem lies with the sender or the receiver. This tool serves as a neutral diagnostic solution that can be used by either solution provider to generate shareable diagnostic reports and flag potential issues.
 
-## API Endpoints
+## Technology Stack
 
-### Core Endpoints
-- `GET /` - API root with basic information
-- `GET /health` - Health check endpoint
-- `GET /swagger` - Interactive API documentation
+- **Framework**: C# with .NET 8 (latest LTS version)
+- **Web Server**: ASP.NET Core framework
+- **License**: MIT License (open-source)
+- **Source Control**: Public GitHub repository
 
-### Diagnostic Endpoints
-- `GET /diagnostics/system` - Comprehensive system information
-- `GET /diagnostics/runtime` - .NET runtime and memory diagnostics
-- `GET /diagnostics/assembly` - Assembly and dependency information
-- `GET /diagnostics/environment` - Environment variables and paths
-- `GET /diagnostics/performance` - Real-time performance metrics
-- `POST /diagnostics/gc` - Force garbage collection and get memory stats
+## Deployment
 
-## Quick Start
+### Docker Support
+The software tool is designed for easy deployment via Docker. Users have two options:
 
-### Running Locally
+1. **Docker Hub**: Use the pre-built Docker image from Docker Hub for quick deployment
+2. **Source Build**: Download and compile the source code directly
 
-1. Ensure you have .NET 9 SDK installed
-2. Navigate to the project directory:
-   ```bash
-   cd DiagnosticsTool
-   ```
-3. Run the application:
-   ```bash
-   dotnet run
-   ```
-4. Open your browser to `https://localhost:5001` or `http://localhost:5000`
+## How It Works
 
-### Docker Deployment
+The Diagnostics Tool operates by sending requests to traceability systems and analyzing their responses to ensure compliance with expected traceability standards or frameworks.
 
-#### Build and Run with Docker
+### Execution Flow
 
-```bash
-# Build the Docker image
-docker build -t diagnosticstool -f Dockerfile ..
+1. **API Request**: User calls the Diagnostics Tool API with:
+   - URL of the target API
+   - Request parameters for the API request
+   - Optional parameters:
+     - Automatic traceback execution
+     - Automatic master data resolution
 
-# Run the container
-docker run -p 5000:8080 -p 5001:8081 diagnosticstool
-```
+2. **System Verification**: The tool executes the request and verifies:
+   - Response headers and content are formatted correctly and valid
+   - No unexpected results (e.g., events that don't match query parameters)
+   - No validity errors (e.g., duplicate Event IDs across multiple events)
+   - Potential validity warnings (e.g., events recorded before EPC creation)
 
-#### Using Docker Compose
+3. **Results Documentation**: Each verification error is captured with detailed information providing clear insights into API compliance failures
 
-```bash
-# Start all services (API + Nginx proxy)
-docker-compose up -d
+4. **Response Format**: Results are returned synchronously in the original HTTP request as:
+   - **Default**: JSON format
+   - **Optional**: PDF format (specify in Accept-Content header)
 
-# View logs
-docker-compose logs -f
+## Validation Approach
 
-# Stop services
-docker-compose down
-```
+### JSON Schemas
+The tool primarily utilizes JSON schemas to validate API request responses. When JSON schema validation is insufficient, custom C# code handles specific verification requirements.
 
-#### Docker Compose Services
+## Multi-Commodity Support
 
-- **diagnosticstool**: Main API service (ports 5000:8080, 5001:8081)
-- **nginx**: Reverse proxy with load balancing and caching (ports 80, 443)
+The Diagnostics Tool is **commodity agnostic**, supporting traceability across multiple sectors through its flexible architecture:
 
-## Configuration
+- Supports beef, leather, seafood, and other commodity supply chains
+- New commodities can be added by including additional JSON schemas
+- Extensible design allows validation of traceability data from a wide range of products
+- Built on shared core standards/frameworks for easy extension
 
-### Environment Variables
+## Scope and Limitations
 
-- `ASPNETCORE_ENVIRONMENT`: Set to `Development`, `Staging`, or `Production`
-- `ASPNETCORE_URLS`: Configure listening URLs (default: `http://+:8080;https://+:8081`)
+### Completeness Checks
+The Diagnostics Tool **does not** check for CTE/KDE matrix completeness. It is designed for real-world traceability data, which typically:
+- May not contain all KDEs of applicable modules
+- May not include all CTEs of the entire supply chain
 
-### Docker Environment
+## Getting Started
 
-The Docker container runs as a non-root user (`appuser`) for security and includes:
-- Health checks every 30 seconds
-- Optimized multi-stage build process
-- Security headers via Nginx proxy
-- Gzip compression
-- Static file caching
+1. Clone the repository from GitHub
+2. Build using .NET 8 SDK or use the Docker image
+3. Configure your traceability system endpoints
+4. Make API calls to begin diagnostics
 
-## Security Features
+## Contributing
 
-- Non-root container execution
-- Security headers (X-Frame-Options, X-XSS-Protection, etc.)
-- Content Security Policy
-- Gzip compression
-- Static file caching with long expiration
+This is an open-source project under the MIT license. Contributions are welcome to help improve traceability system interoperability across various supply chains.
 
-## Monitoring and Health Checks
-
-The application includes built-in health checks accessible at `/health`. Docker containers automatically monitor this endpoint and restart if unhealthy.
-
-## Development
-
-### Project Structure
-
-```
-DiagnosticsTool/
-├── DiagnosticsTool.csproj    # Project file (.NET 9)
-├── Program.cs                # Main application with API endpoints
-├── Dockerfile               # Multi-stage Docker build
-├── docker-compose.yml       # Container orchestration
-├── nginx.conf              # Reverse proxy configuration
-├── .dockerignore           # Docker build exclusions
-└── README.md               # This file
-```
-
-### Building
-
-```bash
-# Restore dependencies
-dotnet restore
-
-# Build the project
-dotnet build
-
-# Run tests (if any)
-dotnet test
-
-# Publish for deployment
-dotnet publish -c Release
-```
-
-## API Documentation
-
-Once running, visit `/swagger` for interactive API documentation with:
-- Request/response examples
-- Parameter descriptions
-- Try-it-out functionality
-- Schema definitions
-
-## Cross-Platform Support
-
-This application is designed to run on:
-- **Linux** (Ubuntu, Alpine, RHEL, etc.)
-- **Windows** (Windows Server, Windows 10/11)
-- **macOS** (Intel and Apple Silicon)
-
-Docker images are based on Microsoft's official .NET 9 runtime images for optimal compatibility and security updates.
-
-## License
-
-This project is part of the OpenTraceability suite and follows the same licensing terms.

@@ -4,6 +4,8 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<SynchReleaseVersion>false</SynchReleaseVersion>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<LangVersion>12</LangVersion>
+		<Nullable>enable</Nullable>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<Title>Open Traceability</Title>
 		<Description>Open source libraries for working with EPCIS in C#.</Description>
@@ -46,7 +48,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="Utility\Data\EPCISJsonSchema.jsonld" />
+		<EmbeddedResource Include="Utility\Data\EPCISJsonSchema.jsonld" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Utility\Data\DigitalLinkSchema.json" />
 	</ItemGroup>
 
 	<ItemGroup>

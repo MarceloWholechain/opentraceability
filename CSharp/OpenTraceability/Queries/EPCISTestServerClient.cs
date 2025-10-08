@@ -10,46 +10,46 @@ using OpenTraceability.Utility;
 
 namespace OpenTraceability.Queries
 {
-	/// <summary>
-	/// A client for talking to an Open Traceability Test Server for
-	/// posting and querying traceability data.
-	/// </summary>
-	public class EPCISTestServerClient
-	{
-		string _baseURL;
-		EPCISDataFormat _format;
-		EPCISVersion _version;
+    /// <summary>
+    /// A client for talking to an Open Traceability Test Server for
+    /// posting and querying traceability data.
+    /// </summary>
+    public class EPCISTestServerClient
+    {
+        string _baseURL;
+        EPCISDataFormat _format;
+        EPCISVersion _version;
 
-		public EPCISTestServerClient(string baseURL, EPCISDataFormat format, EPCISVersion version)
-		{
+        public EPCISTestServerClient(string baseURL, EPCISDataFormat format, EPCISVersion version)
+        {
             _baseURL = baseURL;
-			_version = version;
-			_format = format;
-		}
+            _version = version;
+            _format = format;
+        }
 
-		/// <summary>
-		/// Posts an EPCIS Document to the Test Server and returns
-		/// a blob ID. You will need this blob ID when querying for events
-		/// after.
-		/// </summary>
-		/// <param name="doc"></param>
-		/// <returns>The blob ID of the uploaded traceability data.</returns>
-		public async Task<string> Post(EPCISDocument doc, string blob_id = null)
-		{
-			if (blob_id == null)
+        /// <summary>
+        /// Posts an EPCIS Document to the Test Server and returns
+        /// a blob ID. You will need this blob ID when querying for events
+        /// after.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns>The blob ID of the uploaded traceability data.</returns>
+        public async Task<string> Post(EPCISDocument doc, string? blob_id = null)
+        {
+            if (blob_id == null)
             {
                 blob_id = Guid.NewGuid().ToString();
             }
 
             string url = $"{_baseURL.TrimEnd('/')}/epcis/{blob_id}/events";
 
-			IEPCISDocumentMapper mapper = OpenTraceabilityMappers.EPCISDocument.XML;
-			string contentType = "application/xml";
-			if (_format == EPCISDataFormat.JSON)
-			{
+            IEPCISDocumentMapper mapper = OpenTraceabilityMappers.EPCISDocument.XML;
+            string contentType = "application/xml";
+            if (_format == EPCISDataFormat.JSON)
+            {
                 contentType = "application/json";
                 mapper = OpenTraceabilityMappers.EPCISDocument.JSON;
-			}
+            }
 
             using (var clientItem = HttpClientPool.GetClient())
             {
@@ -105,17 +105,17 @@ namespace OpenTraceability.Queries
                 }
 
                 return blob_id;
-            } 
+            }
         }
 
-		/// <summary>
-		/// Queries the test server blob for events that match the parameters.
-		/// </summary>
-		/// <param name="blob_id">The ID of the blob to query.</param>
-		/// <param name="parameters">The EPCIS Query parameters.</param>
-		/// <returns>The EPCIS Query results.</returns>
-		public async Task<EPCISQueryResults> QueryEvents(string blob_id, EPCISQueryParameters parameters)
-		{
+        /// <summary>
+        /// Queries the test server blob for events that match the parameters.
+        /// </summary>
+        /// <param name="blob_id">The ID of the blob to query.</param>
+        /// <param name="parameters">The EPCIS Query parameters.</param>
+        /// <returns>The EPCIS Query results.</returns>
+        public async Task<EPCISQueryResults> QueryEvents(string blob_id, EPCISQueryParameters parameters)
+        {
             using (var clientItem = HttpClientPool.GetClient())
             {
                 var client = clientItem.Value;
@@ -132,13 +132,13 @@ namespace OpenTraceability.Queries
             }
         }
 
-		/// <summary>
-		/// Queries and performs a traceback against the test server blob given the EPC.
-		/// </summary>
-		/// <param name="blob_id">The ID of the blob to query.</param>
-		/// <param name="epc">The EPC to perform the traceback on.</param>
-		/// <returns>The epcis query results.</returns>
-		public async Task<EPCISQueryResults> Traceback(string blob_id, EPC epc)
+        /// <summary>
+        /// Queries and performs a traceback against the test server blob given the EPC.
+        /// </summary>
+        /// <param name="blob_id">The ID of the blob to query.</param>
+        /// <param name="epc">The EPC to perform the traceback on.</param>
+        /// <returns>The epcis query results.</returns>
+        public async Task<EPCISQueryResults> Traceback(string blob_id, EPC epc)
         {
             using (var clientItem = HttpClientPool.GetClient())
             {

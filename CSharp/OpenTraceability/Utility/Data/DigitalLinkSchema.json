@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opentraceability.io/schemas/digital-link-response.json",
+  "title": "Digital Link Resolver Response",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "link": { "type": "string", "minLength": 1, "format": "uri" },
+      "title": { "type": "string" },
+      "linkType": { "type": "string" },
+      "ianaLanguage": { "type": "string" },
+      "context": { "type": "string" },
+      "mimeType": { "type": "string" },
+      "active": { "type": "boolean" },
+      "fwqs": { "type": "boolean" },
+      "defaultLinkType": { "type": "boolean" },
+      "defaultIanaLanguage": { "type": "boolean" },
+      "defaultContext": { "type": "boolean" },
+      "defaultMimeType": { "type": "boolean" },
+      "identifier": { "type": "string" },
+      "authRequired": { "type": "boolean" }
+    },
+    "required": ["link"],
+    "additionalProperties": true
+  }
+}
+
+

@@ -27,6 +27,12 @@ namespace OpenTraceability.Utility
                         schemaStr = loader.ReadString("OpenTraceability", "OpenTraceability.Utility.Data.EPCISJsonSchema.jsonld");
                         _schemaCache.TryAdd(schemaURL, schemaStr);
                     }
+                    else if (schemaURL == "DigitalLink")
+                    {
+                        EmbeddedResourceLoader loader = new EmbeddedResourceLoader();
+                        schemaStr = loader.ReadString("OpenTraceability", "OpenTraceability.Utility.Data.DigitalLinkSchema.json");
+                        _schemaCache.TryAdd(schemaURL, schemaStr);
+                    }
                     else if (schemaURL == "GDST")
                     {
                         EmbeddedResourceLoader loader = new EmbeddedResourceLoader();
@@ -55,8 +61,10 @@ namespace OpenTraceability.Utility
             var results = mySchema.Evaluate(jDoc, new EvaluationOptions() { OutputFormat = OutputFormat.List });
             if (!results.IsValid)
             {
-                errors = results.Errors?.Select(e => string.Format("{0} :: {1}", e.Key, e.Value)).ToList() ?? new List<string>();
-                errors.AddRange(results.Details?.SelectMany(e => e.Errors ?? new Dictionary<string, string>()).Select(e => string.Format("{0} :: {1}", e.Key, e.Value)).ToList() ?? new List<string>());
+                IEnumerable<string> rootErrors = results.Errors?.Select(e => string.Format("{0} :: {1}", e.Key, e.Value)) ?? Enumerable.Empty<string>();
+                IEnumerable<string> detailErrors = results.Details?.SelectMany(d => (d.Errors ?? new Dictionary<string, string>()).Select(e => string.Format("{0} :: {1}", e.Key, e.Value))) ?? Enumerable.Empty<string>();
+
+                errors = rootErrors.Concat(detailErrors).Distinct().ToList();
             }
 
             return errors;
