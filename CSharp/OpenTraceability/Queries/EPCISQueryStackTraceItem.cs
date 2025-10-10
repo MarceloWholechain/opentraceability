@@ -23,67 +23,67 @@ namespace OpenTraceability.Queries
 		/// <summary>
 		/// The status code of the response that was returned.
 		/// </summary>
-		public HttpStatusCode? ResponseStatusCode { get; set; }
+		public HttpStatusCode? ResponseStatusCode { get; set; } = null;
 
 		/// <summary>
 		/// The relative URL that was executed against the base URL of the EPCIS Query Interface.
 		/// </summary>
-		public Uri RelativeURL { get; set; }
+		public Uri RelativeURL { get; set; } = null!;
 
 		/// <summary>
 		/// The HTTP headers of the request.
 		/// </summary>
-		public List<KeyValuePair<string, IEnumerable<string>>> RequestHeaders { get; set; }
+		public List<KeyValuePair<string, IEnumerable<string>>> RequestHeaders { get; set; } = new List<KeyValuePair<string, IEnumerable<string>>>();
 
 		/// <summary>
 		/// The HTTP headers of the response.
 		/// </summary>
-		public List<KeyValuePair<string, IEnumerable<string>>> ResponseHeaders { get; set; }
+		public List<KeyValuePair<string, IEnumerable<string>>> ResponseHeaders { get; set; } = new List<KeyValuePair<string, IEnumerable<string>>>();
 
 		/// <summary>
 		/// The raw contents of the body of the HTTP request.
 		/// </summary>
-		public string RequestBody { get; set; }
+		public string RequestBody { get; set; } = string.Empty;
 
 		/// <summary>
 		/// The raw contents of the body of the HTTP response.
 		/// </summary>
-		public string ResponseBody { get; set; }
+		public string ResponseBody { get; set; } = string.Empty;
 
-        public override string ToString()
-        {
-            StringBuilder stringBuilder = new StringBuilder();
+		public override string ToString()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
 
-            // write out all the properties to the string builder
-            stringBuilder.AppendLine("HTTP REQUEST::");
-            stringBuilder.AppendLine("ID: " + ID);
-            stringBuilder.AppendLine("Created: " + Created);
-            stringBuilder.AppendLine("ResponseStatusCode: " + ResponseStatusCode);
-            stringBuilder.AppendLine("RelativeURL: " + RelativeURL);
+			// write out all the properties to the string builder
+			stringBuilder.AppendLine("HTTP REQUEST::");
+			stringBuilder.AppendLine("ID: " + ID);
+			stringBuilder.AppendLine("Created: " + Created);
+			stringBuilder.AppendLine("ResponseStatusCode: " + ResponseStatusCode);
+			stringBuilder.AppendLine("RelativeURL: " + RelativeURL);
 
-            if (RequestHeaders != null)
-            {
-                stringBuilder.AppendLine("RequestHeaders:");
-                foreach (var kvp in RequestHeaders)
-                {
-                    stringBuilder.AppendLine("\t" + kvp.Key + ": " + string.Join(", ", kvp.Value));
-                }
-            }
+			if (RequestHeaders != null)
+			{
+				stringBuilder.AppendLine("RequestHeaders:");
+				foreach (var kvp in RequestHeaders)
+				{
+					stringBuilder.AppendLine("\t" + kvp.Key + ": " + string.Join(", ", kvp.Value));
+				}
+			}
 
-            if (ResponseHeaders != null)
-            {
-                stringBuilder.AppendLine("ResponseHeaders:");
-                foreach (var kvp in ResponseHeaders)
-                {
-                    stringBuilder.AppendLine("\t" + kvp.Key + ": " + string.Join(", ", kvp.Value));
-                }
-            }
+			if (ResponseHeaders != null)
+			{
+				stringBuilder.AppendLine("ResponseHeaders:");
+				foreach (var kvp in ResponseHeaders)
+				{
+					stringBuilder.AppendLine("\t" + kvp.Key + ": " + string.Join(", ", kvp.Value));
+				}
+			}
 
-            stringBuilder.AppendLine("RequestBody:\n" + RequestBody);
-            stringBuilder.AppendLine("ResponseBody:\n" + ResponseBody);
+			stringBuilder.AppendLine("RequestBody:\n" + RequestBody);
+			stringBuilder.AppendLine("ResponseBody:\n" + ResponseBody);
 
-            return stringBuilder.ToString();
-        }
-    }
+			return stringBuilder.ToString();
+		}
+	}
 }
 

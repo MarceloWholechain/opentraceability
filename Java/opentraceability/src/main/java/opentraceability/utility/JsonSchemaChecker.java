@@ -26,12 +26,21 @@ public class JsonSchemaChecker {
         JsonSchema mySchema = schemaCache.get(schemaURL);
         if (mySchema == null) {
             synchronized (lock) {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(new URI(schemaURL))
-                        .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                String schemaStr = response.body();
+                String schemaStr;
+                if ("GDST".equals(schemaURL)) {
+                    EmbeddedResourceLoader loader = new EmbeddedResourceLoader();
+                    schemaStr = loader.readString(JsonSchemaChecker.class, "/gdst_json_schema.json");
+                } else if ("EPCIS_BASE".equals(schemaURL)) {
+                    EmbeddedResourceLoader loader = new EmbeddedResourceLoader();
+                    schemaStr = loader.readString(JsonSchemaChecker.class, "/epcis_schema.json");
+                } else {
+                    HttpClient client = HttpClient.newHttpClient();
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(new URI(schemaURL))
+                            .build();
+                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    schemaStr = response.body();
+                }
                 mySchema = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7).getSchema(schemaStr);
                 schemaCache.put(schemaURL, mySchema);
             }

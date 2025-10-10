@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <Title>Open Traceability - Test Server</Title>
@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <Reference Include="ComplianceTool.TestSolutionProvider">
-      <HintPath>..\..\GDSTTools.TestSolutionProvider\bin\Debug\net7.0\ComplianceTool.TestSolutionProvider.dll</HintPath>
+      <HintPath>..\..\GDSTTools.TestSolutionProvider\bin\Debug\net9.0\ComplianceTool.TestSolutionProvider.dll</HintPath>
     </Reference>
   </ItemGroup>
 

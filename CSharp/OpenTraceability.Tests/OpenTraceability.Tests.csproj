@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
@@ -62,42 +62,50 @@
 		<PackageReference Include="NUnit" Version="4.3.2" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
 		<PackageReference Include="NUnit.Analyzers" Version="4.6.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="coverlet.collector" Version="3.1.2" />
-		<PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.12" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
+		<PackageReference Include="Moq" Version="4.20.72" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\OpenTraceability.GDST\OpenTraceability.GDST.csproj" />
 		<ProjectReference Include="..\OpenTraceability\OpenTraceability.csproj" />
 		<ProjectReference Include="..\OpenTraceability.TestServer\OpenTraceability.TestServer.csproj" />
+		<ProjectReference Include="..\DiagnosticsTool\DiagnosticsTool.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Queries\" />
 		<Folder Include="Configurations\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_1.jsonld">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_2.jsonld">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_3.jsonld">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_4.jsonld">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_5.jsonld">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_6.jsonld">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_1.jsonld">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_2.jsonld">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_3.jsonld">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_4.jsonld">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_5.jsonld">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Data\EPCISQUERYDOCUMENT_advanced_6.jsonld">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Data\EPCISQueryDocument_duplicate_eventIDs.jsonld">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Data\EPCISQueryDocument_malformed.jsonld">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
 	</ItemGroup>
 </Project>

@@ -1,0 +1,44 @@
+{
+  "@context": [
+    "https://ref.gs1.org/standards/epcis/epcis-context.jsonld",
+    {
+      "gdst": "https://traceability-dialogue.org/epcis"
+    },
+    {
+      "cbvmda": "urn:epcglobal:cbv:mda"
+    }
+  ],
+  "type": "EPCISDocument",
+  "creationDate": "2022-09-05T19:04:37.5450000+00:00",
+  "schemaVersion": "2.0",
+  "epcisBody": {
+    "eventList": [
+      {
+        "type": "ObjectEvent",
+        "eventTime": "2022-01-22T10:57:24.1560000+00:00",
+        "eventTimeZoneOffset": "+00:00",
+        "eventID": "urn:uuid:2fbb3592-c9fa-47ca-b419-b35528fee66fU",
+        "action": "ADD",
+        "bizStep": "urn:gdst:bizStep:fishingEvent",
+        "disposition": "active",
+        "bizLocation": {
+          "id": "urn:epc:id:sgln:08600031303.1.1"
+        },
+        "quantityList": [
+          {
+            "epcClass": "urn:gdst:example.org:product:lot:class:fisherman01.tunau.v1-0122-2022",
+            "quantity": 9876.0,
+            "uom": "KGM"
+          }
+        ],
+        "ilmd": {
+          "cbvmda:productionMethodForFishAndSeafoodCode": "INVALID_METHOD",
+          "cbvmda:lotNumber": "V1-0122-2022"
+        },
+        "gdst:productOwner": "urn:gdst:example.org:party:fisherman01.1u",
+        "gdst:humanWelfarePolicy": "3P Audit",
+        "cbvmda:informationProvider": "urn:gdst:example.org:party:fisherman01.1u"
+      }
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "@context": [
+    "https://ref.gs1.org/standards/epcis/epcis-context.jsonld",
+    {
+      "gdst": "https://traceability-dialogue.org/epcis"
+    },
+    {
+      "cbvmda": "urn:epcglobal:cbv:mda"
+    }
+  ],
+  "type": "EPCISDocument",
+  "creationDate": "2022-09-05T19:04:37.5450000+00:00",
+  "schemaVersion": "2.0",
+  "epcisBody": {
+    "eventList": [
+      {
+        "type": "TransformationEvent",
+        "eventTime": "2022-01-23T11:10:47.2850000+00:00",
+        "eventTimeZoneOffset": "+00:00",
+        "eventID": "urn:uuid:3b156702-d58e-4ab1-a4d7-3e29b4ba7e6aU",
+        "inputQuantityList": [
+          {
+            "epcClass": "urn:gdst:example.org:product:lot:class:fishfarm.1u.farmed-tuna-01192022",
+            "quantity": 12000.0,
+            "uom": "KGM"
+          }
+        ],
+        "outputQuantityList": [
+          {
+            "epcClass": "urn:gdst:example.org:product:lot:class:processor.10u.commingle-01232022",
+            "quantity": 22000.0,
+            "uom": "KGM"
+          }
+        ],
+        "bizStep": "urn:gdst:bizStep:commingling",
+        "disposition": "active",
+        "bizLocation": {
+          "id": "urn:gdst:example.org:location:loc:processor.plant1u"
+        },
+        "ilmd": {
+          "cbvmda:productionDate": "2022-01-23T03:00:00.0000000+00:00"
+        },
+        "cbvmda:informationProvider": "urn:gdst:example.org:party:processor.1u",
+        "gdst:productOwner": "urn:gdst:example.org:party:processor.1u"
+      }
+    ]
+  }
+}

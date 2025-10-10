@@ -1,0 +1,59 @@
+{
+  "@context": [
+    "https://ref.gs1.org/standards/epcis/epcis-context.jsonld",
+    {
+      "gdst": "https://traceability-dialogue.org/epcis"
+    },
+    {
+      "cbvmda": "urn:epcglobal:cbv:mda"
+    }
+  ],
+  "type": "EPCISDocument",
+  "creationDate": "2022-09-05T19:04:37.5450000+00:00",
+  "schemaVersion": "2.0",
+  "epcisBody": {
+    "eventList": [
+      {
+        "type": "ObjectEvent",
+  "eventTime": "2022-01-22T10:57:24.1560000+00:00",
+  "eventTimeZoneOffset": "+00:00",
+  "action": "ADD",
+  "bizStep": "urn:gdst:bizStep:fishingEvent",
+  "quantityList": [
+    {
+      "epcClass": "urn:test",
+      "quantity": 1000.0,
+      "uom": "KGM"
+    }
+  ],
+  "ilmd": {
+    "cbvmda:productionMethodForFishAndSeafoodCode": "MARINE_FISHERY",
+    "cbvmda:lotNumber": "TEST123",
+    "cbvmda:vesselCatchInformationList": {
+      "cbvmda:vesselCatchInformation": [
+        {
+          "cbvmda:economicZone": "urn:gdst:eez:usa",
+          "cbvmda:fishingGearTypeCode": "urn:gdst:gear:1.1",
+          "cbvmda:vesselFlagState": "USA",
+          "cbvmda:vesselID": "VESSEL1",
+          "cbvmda:vesselName": "Test Vessel",
+          "gdst:fisheryImprovementProject": "test",
+          "gdst:gpsAvailability": true,
+          "gdst:imoNumber": "IMO12345678",
+          "gdst:rfmoArea": "urn:gdst:rfmo:cecaf",
+          "gdst:satelliteTrackingAuthority": "test",
+          "gdst:subnationalPermitArea": "test",
+          "gdst:vesselPublicRegistry": "test",
+          "gdst:vesselTripDate": "2022-01-20T10:57:24.1560000+00:00",
+          "cbvmda:catchArea": "urn:gdst:fao:27.1"
+        }
+      ]
+    }
+  },
+        "gdst:productOwner": "urn:test:party",
+        "gdst:humanWelfarePolicy": "3P Audit",
+        "cbvmda:informationProvider": "urn:test:party"
+      }
+    ]
+  }
+}

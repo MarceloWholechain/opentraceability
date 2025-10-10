@@ -1,3 +1,0 @@
-package opentraceability.utility.attributes
-
-annotation class OpenTraceabilityExtensionElementsAttribute

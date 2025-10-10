@@ -1,0 +1,12 @@
+{
+  "name": "Bad Digital Link Content-Type",
+  "description": "Content-Type header is not application/json.",
+  "endpoint": "/api/v1/diagnostics/digitallink/epcis-url/epc",
+  "body": {
+    "Options": {
+      "URL": "{TEST_LOCAL_URL}/api/v1/test/bad-digital-link-content-type"
+    },
+    "EPC": "urn:gdst:example.org:product:lot:class:123.456.33232"
+  }
+}
+
