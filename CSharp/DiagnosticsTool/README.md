@@ -19,7 +19,7 @@ The Diagnostics Tool addresses the challenge that even when traceability systems
 The software tool is designed for easy deployment via Docker. Users have two options:
 
 1. **Docker Hub**: Use the pre-built Docker image from Docker Hub for quick deployment
-2. **Source Build**: Download and compile the source code directly
+2. **Source Build**: Download and compile the source code directly 
 
 ## How It Works
 
