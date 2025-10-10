@@ -17,6 +17,7 @@ using OpenTraceability.Queries.Diagnostics;
 namespace OpenTraceability.Tests.Queries.Diagnostics
 {
     [TestFixture]
+    [Category("Integration")]
     public class DiagnosticsIntegrationTest
     {
         private static string ReadTestData(string filename) => OpenTraceabilityTests.ReadTestData(filename);

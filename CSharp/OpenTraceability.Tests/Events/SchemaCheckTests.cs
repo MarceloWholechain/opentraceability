@@ -10,6 +10,7 @@ using System.Xml.Linq;
 namespace OpenTraceability.Tests.Events
 {
     [TestFixture]
+    [Category("UnitTest")]
     public class SchemaCheckTests
     {
         [Test]

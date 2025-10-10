@@ -7,6 +7,7 @@ using OpenTraceability.Queries.Diagnostics.Rules;
 namespace OpenTraceability.Tests.Queries.Diagnostics.Rules;
 
 [TestFixture]
+[Category("UnitTest")]
 public class EPCISResponseSchemaRuleTests
 {
     private EPCISResponseSchemaRule _rule;

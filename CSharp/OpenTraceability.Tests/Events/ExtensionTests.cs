@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace OpenTraceability.Tests.Events
 {
+    [Category("UnitTest")]
     internal class ExtensionTests
     {
         /// <summary>

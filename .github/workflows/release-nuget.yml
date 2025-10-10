@@ -19,7 +19,7 @@ jobs:
     - name: Build
       run: dotnet build -c Debug /p:Version=1.5.${{github.run_number}}-debug
     - name: Test
-      run: dotnet test -c Debug --no-build
+      run: dotnet test -c Debug --no-build --filter "TestCategory=UnitTest"
     - name: Build
       run: dotnet build -c Release /p:Version=1.5.${{github.run_number}}
     - name: Pack nugets

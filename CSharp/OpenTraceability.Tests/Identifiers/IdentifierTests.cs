@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace OpenTraceability.Tests.Identifiers
 {
     [TestFixture]
+    [Category("UnitTest")]
     public class IdentifierTests
     {
         [Test]

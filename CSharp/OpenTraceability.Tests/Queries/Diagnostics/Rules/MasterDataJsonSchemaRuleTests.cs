@@ -4,6 +4,7 @@ using OpenTraceability.Queries.Diagnostics.Rules;
 namespace OpenTraceability.Tests.Queries.Diagnostics.Rules;
 
 [TestFixture]
+[Category("UnitTest")]
 public class MasterDataJsonSchemaRuleTests
 {
     private MasterDataJsonSchemaRule _rule;
