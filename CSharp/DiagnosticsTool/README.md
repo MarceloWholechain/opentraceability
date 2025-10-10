@@ -69,10 +69,41 @@ The Diagnostics Tool **does not** check for CTE/KDE matrix completeness. It is d
 
 ## Getting Started
 
-1. Clone the repository from GitHub
-2. Build using .NET 8 SDK or use the Docker image
-3. Configure your traceability system endpoints
-4. Make API calls to begin diagnostics
+1. **Pull the container**
+   ```bash
+   docker pull iftgftc/diagnostics-tool:latest
+   ```
+2. **Run the diagnostics tool** (publish port 8080 for HTTP):
+   ```bash
+   docker run --rm -p 8080:8080 --name diagnostics-tool iftgftc/diagnostics-tool:latest
+   ```
+3. **Open the UI**
+   - Navigate to `http://localhost:8080` to load the Diagnostics Tool web UI.
+   - Use the left navigation to access diagnostics features and saved reports.
+4. **Call the API directly**
+   - Send requests to the hosted controller endpoints, e.g.:
+     - Resolve EPC Digital Link URL:
+       ```bash
+       curl -X POST http://localhost:8080/api/v1/diagnostics/digitallink/epcis-url/epc \
+         -H "Content-Type: application/json" \
+         -d '{
+           "epc": "urn:epc:id:sgtin:0614141.107346.2017",
+           "options": { "url": "https://example.com/epcis" }
+         }'
+       ```
+     - Query EPCIS events:
+       ```bash
+       curl -X POST http://localhost:8080/api/v1/diagnostics/epcis/query/events \
+         -H "Content-Type: application/json" \
+         -d '{
+           "options": { "url": "https://example.com/epcis" },
+           "parameters": {}
+         }'
+       ```
+5. **Execute test requests in the UI**
+   - In the UI, choose *Diagnostics Tests* and pick a template (e.g., EPCIS Query, Traceback).
+   - Populate connection settings (URL, authentication, EPC/PGLN values) and submit.
+   - Review the returned diagnostics report and download it if needed.
 
 ## Contributing
 
