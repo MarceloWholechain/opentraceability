@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace OpenTraceability.Queries.Diagnostics;
@@ -28,9 +29,39 @@ public enum RequestType
 public class DiagnosticsRequest
 {
     /// <summary>
+    /// The title of the request.
+    /// </summary>
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The start of the request.
+    /// </summary>
+    public DateTime Start { get; set; }
+
+    /// <summary>
+    /// The end of the request.
+    /// </summary>
+    public DateTime End { get; set; }
+
+    /// <summary>
     /// The options that were used to perform the request.
     /// </summary>
     public object? RequestOptions { get; set; } = null;
+
+    /// <summary>
+    /// The HTTP request used in the request, if applicable.
+    /// </summary>
+    public HttpRequestMessage? HttpRequest { get; set; } = null;
+
+    /// <summary>
+    /// The HTTP response received from the request, if applicable.
+    /// </summary>
+    public HttpResponseMessage? HttpResponse { get; set; } = null;
+
+    /// <summary>
+    /// The body of the response received from the request, if applicable.
+    /// </summary>
+    public string ResponseBody { get; set; } = string.Empty;
 
     /// <summary>
     /// The list of validations that were performed against the singular request.

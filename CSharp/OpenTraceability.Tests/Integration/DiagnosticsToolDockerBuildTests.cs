@@ -110,7 +110,7 @@ public class DiagnosticsToolDockerBuildTests
         string stderr = p.StandardError.ReadToEnd();
         p.WaitForExit();
 
-        TestContext.WriteLine($"$ docker {arguments}\n{stdout}\n{stderr}");
+        TestContext.Out.WriteLine($"$ docker {arguments}\n{stdout}\n{stderr}");
         if (p.ExitCode != 0 && !ignoreErrors)
         {
             Assert.Fail($"Docker command failed: docker {arguments}\nExitCode: {p.ExitCode}\nSTDOUT: {stdout}\nSTDERR: {stderr}");

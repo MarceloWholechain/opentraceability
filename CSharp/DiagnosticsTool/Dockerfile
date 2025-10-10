@@ -9,12 +9,14 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy the project file and restore dependencies
-COPY ["DiagnosticsTool/DiagnosticsTool.csproj", "DiagnosticsTool/"]
+# Copy the project files needed for restore
+COPY ["CSharp/DiagnosticsTool/DiagnosticsTool.csproj", "DiagnosticsTool/"]
+COPY ["CSharp/OpenTraceability/OpenTraceability.csproj", "OpenTraceability/"]
 RUN dotnet restore "DiagnosticsTool/DiagnosticsTool.csproj"
 
-# Copy the entire source code
-COPY . .
+# Copy the entire source code and supporting docs
+COPY CSharp/ ./
+COPY docs/ /docs/
 WORKDIR "/src/DiagnosticsTool"
 
 # Build the application

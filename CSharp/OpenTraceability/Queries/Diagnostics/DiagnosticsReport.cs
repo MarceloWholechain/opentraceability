@@ -35,10 +35,12 @@ public class DiagnosticsReport
     /// <summary>
     /// Creates a new request.
     /// </summary>
-    public void NewRequest(object? requestOptions = null)
+    public void NewRequest(string title, object? requestOptions = null)
     {
         Requests.Add(new DiagnosticsRequest()
         {
+            Title = title,
+            Start = DateTime.UtcNow,
             RequestOptions = requestOptions
         });
     }

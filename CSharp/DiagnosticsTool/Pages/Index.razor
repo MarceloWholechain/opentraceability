@@ -1,0 +1,182 @@
+@page "/"
+@inject DiagnosticsTool.Services.IDiagnosticsEnvelopeCache Cache
+@inject DiagnosticsTool.Services.ITestService TestService
+@using DiagnosticsTool.Services
+@using DiagnosticsTool.Models.Responses
+@using DiagnosticsTool.Models.Tests
+
+@{
+    var entries = Cache.GetEntries().OrderByDescending(e => e.CreatedUtc).ToList();
+}
+
+<div class="page-header">
+    <div class="page-header-copy">
+        <h1 class="page-title">Diagnostics Tool</h1>
+        <p class="page-lead">Trigger built-in diagnostics tests or review historical runs.</p>
+    </div>
+    <div class="page-header-actions">
+        <a class="btn secondary" href="/swagger" target="_blank" rel="noopener">Open Swagger</a>
+    </div>
+</div>
+
+<section class="card card-table">
+  <h2 class="section-title" style="padding: 1.75rem 0 0 1.75rem;">Recent Diagnostics</h2>
+    @if (!entries.Any())
+    {
+        <div class="empty-state">
+            <h3>No diagnostics reports yet</h3>
+            <p>Trigger API requests via the Swagger UI or run a built-in test to populate this dashboard.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Created (UTC)</th>
+                        <th>Requests</th>
+                        <th>Validations</th>
+                        <th>Schema Err</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in entries)
+                    {
+                        <tr @onclick="() => GoToDetails(e.Id)">
+                            <td class="mono">@Shorten(e.Id)</td>
+                            <td>@e.CreatedUtc.ToString("u")</td>
+                            <td>@e.RequestCount</td>
+                            <td>@e.ValidationCount</td>
+                            <td>
+                                @if (e.HasSchemaErrors)
+                                {
+                                    <span class="badge danger">Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="badge ok">No</span>
+                                }
+                            </td>
+                            <td>
+                                <button class="btn small ghost" @onclick:stopPropagation="true"
+                                    @onclick="() => GoToDetails(e.Id)">View</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+<section class="card" style="margin-top: 20px;">
+    <h2 class="section-title">Built-in Diagnostics Tests</h2>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert error">@errorMessage</div>
+    }
+    @if (tests.Count == 0)
+    {
+        <div class="muted">No tests are currently defined.</div>
+    }
+    else
+    {
+        <ul class="test-list">
+            @foreach (var test in tests)
+            {
+                var isRunning = runningTestId == test.TestId;
+                <li class="test-item">
+                    <div class="test-meta">
+                        <h3>@(string.IsNullOrWhiteSpace(test.Name) ? test.TestId : test.Name)</h3>
+                        @if (!string.IsNullOrWhiteSpace(test.Description))
+                        {
+                            <p class="muted">@test.Description</p>
+                        }
+                    </div>
+                    <div class="test-actions">
+                        <button class="btn" disabled="@isRunning" @onclick="() => RunTestAsync(test.TestId)">
+                            @if (isRunning)
+                            {
+                                <span class="spinner"></span>
+                                <span>Running...</span>
+                            }
+                            else
+                            {
+                                <span>Execute Test</span>
+                            }
+                        </button>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+</section>
+
+<p class="footer-note">Explore the REST API via <a href="/swagger" target="_blank" rel="noopener">/swagger</a>. All
+    endpoints are versioned under <code>/api/v1</code>.</p>
+
+@code {
+    private List<DiagnosticsToolTestSummary> tests = new();
+    private string? runningTestId;
+    private string? errorMessage;
+
+    protected override void OnInitialized()
+    {
+        LoadTests();
+    }
+
+    private void LoadTests()
+    {
+        try
+        {
+            tests = TestService.GetTests()
+            .Select(t => new DiagnosticsToolTestSummary(t.TestId, t.Config.Name, t.Config.Description))
+            .ToList();
+            errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            tests = new List<DiagnosticsToolTestSummary>();
+        }
+    }
+
+    private async Task RunTestAsync(string testId)
+    {
+        runningTestId = testId;
+        errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var baseUri = new Uri(NavigationManager.BaseUri);
+            var result = await TestService.ExecuteTestAsync(testId, baseUri);
+            if (result?.DiagnosticsId != null)
+            {
+                NavigationManager.NavigateTo($"/diagnostics/{result.DiagnosticsId}");
+            }
+            else
+            {
+                errorMessage = "Test executed but no diagnostics ID was returned.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to execute test: {ex.Message}";
+        }
+        finally
+        {
+            runningTestId = null;
+            StateHasChanged();
+        }
+    }
+
+    void GoToDetails(string id) => NavigationManager.NavigateTo($"/diagnostics/{id}");
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+
+    string Shorten(string id) => id.Length > 12 ? id.Substring(0, 12) + "..." : id;
+}

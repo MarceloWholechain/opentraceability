@@ -33,7 +33,7 @@ namespace OpenTraceability.Queries
         public static async Task<Uri?> GetEPCISQueryInterfaceURL(DigitalLinkQueryOptions options, EPC epc, HttpClient client, DiagnosticsReport? report = null)
         {
             // DIAGNOSTICS: Create a new request.
-            report?.NewRequest(options);
+            report?.NewRequest("Requesting EPCIS Query Interface URL (w/ EPC)", options);
 
             if (options.URL == null)
             {
@@ -66,7 +66,8 @@ namespace OpenTraceability.Queries
             // DIAGNOSTICS: Execute the rule to validate the Http Headers.   
             if (report != null)
             {
-                await report.ExecuteRuleAsync<DigitalLinkHttpRequestRule>(request.Headers);
+                report.CurrentRequest.HttpRequest = request;
+                await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkHttpRequestRule>(request.Headers);
             }
 
             // Send the request.
@@ -75,7 +76,9 @@ namespace OpenTraceability.Queries
             // DIAGNOSTICS: Execute the rule to validate the Http Headers.   
             if (report != null)
             {
-                await report.ExecuteRuleAsync<DigitalLinkHttpResponseRule>(response);
+                report.CurrentRequest.HttpResponse = response;
+                report.CurrentRequest.End = DateTime.UtcNow;
+                await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkHttpResponseRule>(response);
             }
 
             if (response.IsSuccessStatusCode)
@@ -85,13 +88,14 @@ namespace OpenTraceability.Queries
                 // DIAGNOSTICS: Execute the rule to validate the JSON.
                 if (report != null)
                 {
-                    await report.ExecuteRuleAsync<DigitalLinkJsonSchemaRule>(json);
+                    report.CurrentRequest.ResponseBody = await response.Content.ReadAsStringAsync();
+                    await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkJsonSchemaRule>(json);
                 }
 
                 // DIAGNOSTICS: Execute the rule to validate a response was found.
                 if (report != null)
                 {
-                    await report.ExecuteRuleAsync<DigitalLinkResponseFoundRule>(json);
+                    await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkResponseFoundRule>(json);
                 }
 
                 var link = JsonConvert.DeserializeObject<List<DigitalLink>>(json)?.FirstOrDefault();
@@ -115,7 +119,7 @@ namespace OpenTraceability.Queries
         public static async Task<Uri?> GetEPCISQueryInterfaceURL(DigitalLinkQueryOptions options, PGLN pgln, HttpClient client, DiagnosticsReport? report = null)
         {
             // DIAGNOSTICS: Create a new request.
-            report?.NewRequest(options);
+            report?.NewRequest("Request EPCIS Query Interface URL (w/ PGLN)", options);
 
             if (options.URL == null)
             {
@@ -138,17 +142,20 @@ namespace OpenTraceability.Queries
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             // DIAGNOSTICS: Execute the rule to validate the Http Headers.   
-            if (report != null)
+            if (report?.CurrentRequest != null)
             {
-                await report.ExecuteRuleAsync<DigitalLinkHttpRequestRule>(request.Headers);
+                report.CurrentRequest.HttpRequest = request;
+                await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkHttpRequestRule>(request.Headers);
             }
 
             var response = await client.SendAsync(request);
 
             // DIAGNOSTICS: Execute the rule to validate the Http Headers.   
-            if (report != null)
+            if (report?.CurrentRequest != null)
             {
-                await report.ExecuteRuleAsync<DigitalLinkHttpResponseRule>(response);
+                report.CurrentRequest.HttpResponse = response;
+                report.CurrentRequest.End = DateTime.UtcNow;
+                await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkHttpResponseRule>(response);
             }
 
             if (response.IsSuccessStatusCode)
@@ -156,15 +163,16 @@ namespace OpenTraceability.Queries
                 string json = await response.Content.ReadAsStringAsync();
 
                 // DIAGNOSTICS: Execute the rule to validate the JSON.
-                if (report != null)
+                if (report?.CurrentRequest != null)
                 {
-                    await report.ExecuteRuleAsync<DigitalLinkJsonSchemaRule>(json);
+                    report.CurrentRequest.ResponseBody = await response.Content.ReadAsStringAsync();
+                    await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkJsonSchemaRule>(json);
                 }
 
                 // DIAGNOSTICS: Execute the rule to validate a response was found.
-                if (report != null)
+                if (report?.CurrentRequest != null)
                 {
-                    await report.ExecuteRuleAsync<DigitalLinkResponseFoundRule>(json);
+                    await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkResponseFoundRule>(json);
                 }
 
                 var link = JsonConvert.DeserializeObject<List<DigitalLink>>(json)?.FirstOrDefault();
@@ -324,8 +332,8 @@ namespace OpenTraceability.Queries
 		public static async Task<EPCISQueryResults> QueryEvents(EPCISQueryInterfaceOptions options, EPCISQueryParameters parameters, HttpClient client, DiagnosticsReport? report = null)
         {
             // DIAGNOSTICS: Create a new request.
-            report?.NewRequest(options);
-
+            report?.NewRequest("Query EPCIS Events", options);
+                                             
             // determine the mapper for deserialize the contents
             IEPCISQueryDocumentMapper mapper = OpenTraceabilityMappers.EPCISQueryDocument.JSON;
             if (options.Format == EPCISDataFormat.XML)
@@ -377,7 +385,8 @@ namespace OpenTraceability.Queries
             // DIAGNOSTICS: Execute the rule to validate the HTTP request headers.
             if (report != null)
             {
-                await report.ExecuteRuleAsync<EPCISHttpRequestRule>(request.Headers, options.Version, options.Format);
+                report.CurrentRequest.HttpRequest = request;
+                await report.CurrentRequest.ExecuteRuleAsync<EPCISHttpRequestRule>(request.Headers, options.Version, options.Format);
             }
 
             EPCISQueryResults results = new EPCISQueryResults();
@@ -397,7 +406,9 @@ namespace OpenTraceability.Queries
                 // DIAGNOSTICS: Execute the rule to validate the HTTP response.
                 if (report != null)
                 {
-                    await report.ExecuteRuleAsync<EPCISHttpResponseRule>(response);
+                    report.CurrentRequest.HttpResponse = response;
+                    report.CurrentRequest.End = DateTime.UtcNow;
+                    await report.CurrentRequest.ExecuteRuleAsync<EPCISHttpResponseRule>(response);
                 }
 
                 if (response.IsSuccessStatusCode)
@@ -405,7 +416,8 @@ namespace OpenTraceability.Queries
                     // DIAGNOSTICS: Execute the rule to validate the response schema.
                     if (report != null && responseBody != null)
                     {
-                        await report.ExecuteRuleAsync<EPCISResponseSchemaRule>(responseBody, options.Format, options.Version);
+                        report.CurrentRequest.ResponseBody = responseBody;
+                        await report.CurrentRequest.ExecuteRuleAsync<EPCISResponseSchemaRule>(responseBody, options.Format, options.Version);
                     }
 
                     var doc = mapper.Map(responseBody ?? string.Empty, false);
@@ -414,7 +426,7 @@ namespace OpenTraceability.Queries
                     // DIAGNOSTICS: Execute the rule to validate for duplicate event IDs.
                     if (report != null && doc != null)
                     {
-                        await report.ExecuteRuleAsync<EPCISDuplicateEventIDsRule>(doc);
+                        await report.CurrentRequest.ExecuteRuleAsync<EPCISDuplicateEventIDsRule>(doc);
                     }
                 }
                 else

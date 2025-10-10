@@ -27,7 +27,7 @@ namespace OpenTraceability.Queries
         public static async Task ResolveMasterData(DigitalLinkQueryOptions options, EPCISBaseDocument doc, HttpClient client, DiagnosticsReport? report = null)
         {
             // DIAGNOSTICS: Create a new request.
-            report?.NewRequest(options);
+            report?.NewRequest("Resolve Master Data", options);
 
             // find all master data we have not resolved yet...
             foreach (var evt in doc.Events)
@@ -257,7 +257,7 @@ namespace OpenTraceability.Queries
         public static async Task<object> ResolveMasterDataItem(Type type, DigitalLinkQueryOptions options, string relativeURL, HttpClient httpClient, DiagnosticsReport? report = null, bool addGDSTExtension = false, object? originalIdentifier = null)
         {
             // DIAGNOSTICS: Create a new request.
-            report?.NewRequest(options);
+            report?.NewRequest("Resolve Master Data", options);
 
             if (options.URL == null)
             {
