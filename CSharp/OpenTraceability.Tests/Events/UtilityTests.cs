@@ -2,7 +2,8 @@
 namespace OpenTraceability.Tests.Events
 {
 	[TestFixture]
-	public class UtilityTests
+    [Category("UnitTest")]
+    public class UtilityTests
 	{
 		[Test]
 		[TestCase("EPCISQueryDocument.jsonld")]

@@ -9,6 +9,7 @@ using OpenTraceability.Queries;
 namespace OpenTraceability.Tests.Queries
 {
     [TestFixture]
+    [Category("UnitTest")]
     public class QueryTests
     {
         private static IWebHost _testServer;

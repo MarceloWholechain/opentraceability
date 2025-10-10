@@ -8,6 +8,7 @@ using OpenTraceability.Queries.Diagnostics.Rules;
 namespace OpenTraceability.Tests.Queries.Diagnostics.Rules;
 
 [TestFixture]
+[Category("UnitTest")]
 public class EPCISHttpRequestRuleTests
 {
     private EPCISHttpRequestRule _rule;

@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 namespace OpenTraceability.Tests.Integration;
 
 [TestFixture]
+[Category("Integration")]
 public class DiagnosticsToolIntegrationTests
 {
     private static IWebHost? _epcisTestServer;

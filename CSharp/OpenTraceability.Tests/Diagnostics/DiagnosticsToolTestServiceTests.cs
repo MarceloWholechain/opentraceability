@@ -13,6 +13,7 @@ using NUnit.Framework;
 namespace OpenTraceability.Tests.Diagnostics
 {
     [TestFixture]
+    [Category("Integration")]
     public class DiagnosticsToolTestServiceTests
     {
         private static IConfiguration config;

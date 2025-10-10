@@ -7,6 +7,7 @@ using NUnit.Framework;
 namespace OpenTraceability.Tests.Integration;
 
 [TestFixture]
+[Category("Docker")]
 public class DiagnosticsToolDockerBuildTests
 {
     private static bool DockerAvailable()
