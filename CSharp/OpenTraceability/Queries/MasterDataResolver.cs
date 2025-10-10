@@ -49,7 +49,7 @@ namespace OpenTraceability.Queries
                         var pgln = new PGLN(source.Value ?? throw new Exception("source in event source list has NULL value."));
                         if (pgln != null)
                         {
-                            await ResolveTradingParty(options, pgln, doc, client, report);
+                            await ResolveTradingParty(options, pgln, doc, client, report: report);
                         }
                     }
                 }
@@ -61,7 +61,7 @@ namespace OpenTraceability.Queries
                         var pgln = new PGLN(dest.Value ?? throw new Exception("source in event source list has NULL value."));
                         if (pgln != null)
                         {
-                            await ResolveTradingParty(options, pgln, doc, client, report);
+                            await ResolveTradingParty(options, pgln, doc, client, report: report);
                         }
                     }
                 }
@@ -116,7 +116,7 @@ namespace OpenTraceability.Queries
                 if (doc.GetMasterData<Tradeitem>(gtin.ToString()) == null)
                 {
                     Type t = Setup.GetMasterDataTypeDefault(typeof(Tradeitem)) ?? typeof(Tradeitem);
-                    var ti = (await ResolveMasterDataItem(t, options, $"/01/{gtin}?linkType=gs1:masterData", client, report, false, gtin.ToString())) as Tradeitem;
+                    var ti = (await ResolveMasterDataItem(t, options, $"/01/{gtin}?linkType=gs1:masterData", client, false, gtin.ToString(), report)) as Tradeitem;
                     if (ti != null)
                     {
                         doc.MasterData.Add(ti);
@@ -132,7 +132,7 @@ namespace OpenTraceability.Queries
                 if (doc.GetMasterData<Location>(gln.ToString()) == null)
                 {
                     Type t = Setup.GetMasterDataTypeDefault(typeof(Location)) ?? typeof(Location);
-                    var l = (await ResolveMasterDataItem(t, options, $"/414/{gln}?linkType=gs1:masterData", client, report, false, gln.ToString())) as Location;
+                    var l = (await ResolveMasterDataItem(t, options, $"/414/{gln}?linkType=gs1:masterData", client, false, gln.ToString(), report)) as Location;
                     if (l != null)
                     {
                         doc.MasterData.Add(l);
@@ -141,14 +141,14 @@ namespace OpenTraceability.Queries
             }
         }
 
-        public static async Task ResolveTradingParty(DigitalLinkQueryOptions options, PGLN pgln, EPCISBaseDocument doc, HttpClient client, DiagnosticsReport? report = null, bool addGDSTExtensionHeader = false)
+        public static async Task ResolveTradingParty(DigitalLinkQueryOptions options, PGLN pgln, EPCISBaseDocument doc, HttpClient client, bool addGDSTExtensionHeader = false, DiagnosticsReport? report = null)
         {
             if (pgln != null)
             {
                 if (doc.GetMasterData<TradingParty>(pgln.ToString()) == null)
                 {
                     Type t = Setup.GetMasterDataTypeDefault(typeof(TradingParty)) ?? typeof(TradingParty);
-                    var tp = (await ResolveMasterDataItem(t, options, $"/417/{pgln}?linkType=gs1:masterData", client, report, addGDSTExtensionHeader, pgln.ToString())) as TradingParty;
+                    var tp = (await ResolveMasterDataItem(t, options, $"/417/{pgln}?linkType=gs1:masterData", client, addGDSTExtensionHeader, pgln.ToString(), report)) as TradingParty;
                     if (tp != null)
                     {
                         doc.MasterData.Add(tp);
@@ -163,7 +163,7 @@ namespace OpenTraceability.Queries
             {
                 if (doc.GetMasterData<Tradeitem>(gtin.ToString()) == null)
                 {
-                    var ti = await ResolverMasterDataItem<T>(options, $"/01/{gtin}?linkType=gs1:masterData", client, report, gtin);
+                    var ti = await ResolverMasterDataItem<T>(options, $"/01/{gtin}?linkType=gs1:masterData", client, gtin, report);
                     if (ti != null)
                     {
                         doc.MasterData.Add(ti);
@@ -178,7 +178,7 @@ namespace OpenTraceability.Queries
             {
                 if (doc.GetMasterData<Location>(gln.ToString()) == null)
                 {
-                    var l = await ResolverMasterDataItem<T>(options, $"/414/{gln}?linkType=gs1:masterData", client, report, gln);
+                    var l = await ResolverMasterDataItem<T>(options, $"/414/{gln}?linkType=gs1:masterData", client, gln, report);
                     if (l != null)
                     {
                         doc.MasterData.Add(l);
@@ -193,7 +193,7 @@ namespace OpenTraceability.Queries
             {
                 if (doc.GetMasterData<TradingParty>(pgln.ToString()) == null)
                 {
-                    var tp = await ResolverMasterDataItem<T>(options, $"/417/{pgln}?linkType=gs1:masterData", client, report, pgln);
+                    var tp = await ResolverMasterDataItem<T>(options, $"/417/{pgln}?linkType=gs1:masterData", client, pgln, report);
                     if (tp != null)
                     {
                         doc.MasterData.Add(tp);
@@ -206,7 +206,7 @@ namespace OpenTraceability.Queries
         {
             if (gtin != null)
             {
-                var ti = await ResolverMasterDataItem<Tradeitem>(options, $"/01/{gtin}?linkType=gs1:masterData", client, report, gtin);
+                var ti = await ResolverMasterDataItem<Tradeitem>(options, $"/01/{gtin}?linkType=gs1:masterData", client, gtin, report);
                 if (ti != null)
                 {
                     return ti;
@@ -219,7 +219,7 @@ namespace OpenTraceability.Queries
         {
             if (gln != null)
             {
-                var l = await ResolverMasterDataItem<Location>(options, $"/414/{gln}?linkType=gs1:masterData", client, report, gln);
+                var l = await ResolverMasterDataItem<Location>(options, $"/414/{gln}?linkType=gs1:masterData", client, gln, report);
                 if (l != null)
                 {
                     return l;
@@ -232,7 +232,7 @@ namespace OpenTraceability.Queries
         {
             if (pgln != null)
             {
-                var tp = await ResolverMasterDataItem<TradingParty>(options, $"/417/{pgln}?linkType=gs1:masterData", client, report, pgln);
+                var tp = await ResolverMasterDataItem<TradingParty>(options, $"/417/{pgln}?linkType=gs1:masterData", client, pgln, report);
                 if (tp != null)
                 {
                     return tp;
@@ -241,9 +241,9 @@ namespace OpenTraceability.Queries
             return null;
         }
 
-        public static async Task<T?> ResolverMasterDataItem<T>(DigitalLinkQueryOptions options, string relativeURL, HttpClient client, DiagnosticsReport? report = null, object? originalIdentifier = null) where T : IVocabularyElement
+        public static async Task<T?> ResolverMasterDataItem<T>(DigitalLinkQueryOptions options, string relativeURL, HttpClient client, object? originalIdentifier = null, DiagnosticsReport? report = null) where T : IVocabularyElement
         {
-            var response = await ResolveMasterDataItem(typeof(T), options, relativeURL, client, report, false, originalIdentifier);
+            var response = await ResolveMasterDataItem(typeof(T), options, relativeURL, client, false, originalIdentifier, report);
             if (response == null)
             {
                 return default(T);
@@ -254,7 +254,7 @@ namespace OpenTraceability.Queries
             }
         }
 
-        public static async Task<object> ResolveMasterDataItem(Type type, DigitalLinkQueryOptions options, string relativeURL, HttpClient httpClient, DiagnosticsReport? report = null, bool addGDSTExtension = false, object? originalIdentifier = null)
+        public static async Task<object> ResolveMasterDataItem(Type type, DigitalLinkQueryOptions options, string relativeURL, HttpClient httpClient, bool addGDSTExtension = false, object? originalIdentifier = null, DiagnosticsReport? report = null)
         {
             // DIAGNOSTICS: Create a new request.
             report?.NewRequest("Resolve Master Data", options);

@@ -57,7 +57,7 @@ public class DiagnosticsToolIntegrationTests
                 var parameters = new EPCISQueryParameters(prod.EPC);
                 var request = new QueryEventsRequest { Options = options, Parameters = parameters };
 
-                var response = await http.PostAsJsonAsync("/api/epcis/query/events", request);
+                var response = await http.PostAsJsonAsync("/api/v1/diagnostics/epcis/query/events", request);
                 Assert.That(response.IsSuccessStatusCode, Is.True, $"DiagnosticsTool returned HTTP {(int)response.StatusCode}");
 
                 string json = await response.Content.ReadAsStringAsync();
@@ -95,7 +95,7 @@ public class DiagnosticsToolIntegrationTests
 
         var request = new TracebackRequest { Options = options, EPC = firstEpc.ToString() };
 
-        var response = await http.PostAsJsonAsync("/api/epcis/query/traceback", request);
+        var response = await http.PostAsJsonAsync("/api/v1/diagnostics/epcis/query/traceback", request);
         Assert.That(response.IsSuccessStatusCode, Is.True, $"DiagnosticsTool returned HTTP {(int)response.StatusCode}");
 
         string json = await response.Content.ReadAsStringAsync();

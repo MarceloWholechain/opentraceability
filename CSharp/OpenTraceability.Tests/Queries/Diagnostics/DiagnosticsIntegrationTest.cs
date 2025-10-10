@@ -64,7 +64,8 @@ namespace OpenTraceability.Tests.Queries.Diagnostics
             var result = await EPCISTraceabilityResolver.GetEPCISQueryInterfaceURL(options, epc, client, report);
 
             Assert.That(result, Is.Null);
-            Assert.That(report.Validations.Any(v => v.Type == DiagnosticsValidationType.HttpError && v.Message.Contains("500")), Is.True);
+            Assert.That(report.Requests.Count, Is.EqualTo(1));
+            Assert.That(report.Requests[0].Validations.Any(v => v.Type == DiagnosticsValidationType.HttpError && v.Message.Contains("500")), Is.True);
         }
 
         [Test]
@@ -86,7 +87,9 @@ namespace OpenTraceability.Tests.Queries.Diagnostics
             {
                 Assert.That(results.Errors.Count, Is.EqualTo(1));
                 Assert.That(results.Errors[0].Details, Does.Contain("500"));
-                Assert.That(report.Validations.Any(v => v.Type == DiagnosticsValidationType.HttpError && v.Message.Contains("500")), Is.True);
+                Assert.That(results.Document, Is.Null);
+                Assert.That(report.Requests.Count, Is.EqualTo(1));
+                Assert.That(report.Requests[0].Validations.Any(v => v.Type == DiagnosticsValidationType.HttpError && v.Message.Contains("500")), Is.True);
             });
         }
 
@@ -110,7 +113,8 @@ namespace OpenTraceability.Tests.Queries.Diagnostics
             {
                 Assert.That(results.Errors.Count, Is.EqualTo(0));
                 Assert.That(results.Document, Is.Not.Null);
-                Assert.That(report.Validations.Any(v => v.Type == DiagnosticsValidationType.BusinessRuleError && v.Message.Contains("Duplicate event ID")), Is.True);
+                Assert.That(report.Requests.Count, Is.EqualTo(1));
+                Assert.That(report.Requests[0].Validations.Any(v => v.Type == DiagnosticsValidationType.BusinessRuleError && v.Level == LogLevel.Error && v.Message.Contains("Duplicate event ID")), Is.True);
             });
         }
 
@@ -132,9 +136,8 @@ namespace OpenTraceability.Tests.Queries.Diagnostics
 
             Assert.Multiple(() =>
             {
-                // Should produce schema error validations but NOT necessarily add to results.Errors (mapper may never run if schema rule fails first)
-                Assert.That(report.Validations.Any(v => v.Type == DiagnosticsValidationType.SchemaError), Is.True);
-                Assert.That(results.Errors.Count, Is.EqualTo(0));
+                Assert.That(report.Requests.Count, Is.EqualTo(1));
+                Assert.That(report.Requests[0].Validations.Any(v => v.Type == DiagnosticsValidationType.SchemaError && v.Level == LogLevel.Error), Is.True);
             });
         }
 

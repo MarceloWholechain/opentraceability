@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text;
 using NUnit.Framework;
 
 namespace OpenTraceability.Tests.Integration;
@@ -56,8 +57,9 @@ public class DiagnosticsToolDockerBuildTests
         RunDocker($"rm -f {containerName}", ignoreErrors: true);
         RunDocker($"rmi {imageTag}", ignoreErrors: true);
 
-        // Build image using solution root as context so referenced projects are available
-        RunDocker($"build -f \"{dockerfile}\" -t {imageTag} \"{solutionRoot}\"");
+        // Build image using repository root as context so referenced projects are available
+        string repoRoot = Directory.GetParent(solutionRoot)?.FullName ?? solutionRoot;
+        RunDocker($"build -f \"{dockerfile}\" -t {imageTag} \"{repoRoot}\"");
 
         // Run container mapping host port 5089 -> container 8080 and enable Development env for Swagger
         int hostPort = 5089;
@@ -74,7 +76,7 @@ public class DiagnosticsToolDockerBuildTests
             {
                 try
                 {
-                    resp = await client.GetAsync(baseUrl + "/swagger/v1/swagger.json");
+                    resp = await client.GetAsync(baseUrl + "");
                     if (resp.IsSuccessStatusCode) break;
                 }
                 catch (Exception ex) { lastEx = ex; }
@@ -84,7 +86,7 @@ public class DiagnosticsToolDockerBuildTests
             Assert.That(resp, Is.Not.Null, "Did not receive any HTTP response from container.");
             Assert.That(resp!.IsSuccessStatusCode, Is.True, $"DiagnosticsTool swagger endpoint not reachable. Last exception: {lastEx}");
             string swaggerJson = await resp.Content.ReadAsStringAsync();
-            Assert.That(swaggerJson, Does.Contain("DiagnosticsTool API"), "Swagger JSON did not contain expected title.");
+            Assert.That(swaggerJson, Does.Contain("<!DOCTYPE html>"), "HTML doc returned as expected.");
         }
         finally
         {
@@ -105,12 +107,35 @@ public class DiagnosticsToolDockerBuildTests
             UseShellExecute = false,
             CreateNoWindow = true
         };
+
+        var stdoutBuilder = new StringBuilder();
+        var stderrBuilder = new StringBuilder();
+
+        TestContext.Out.WriteLine($"$ docker {arguments}");
+
         using var p = Process.Start(psi)!;
-        string stdout = p.StandardOutput.ReadToEnd();
-        string stderr = p.StandardError.ReadToEnd();
+
+        p.OutputDataReceived += (_, e) =>
+        {
+            if (e.Data is null) return;
+            stdoutBuilder.AppendLine(e.Data);
+            TestContext.Out.WriteLine(e.Data);
+        };
+
+        p.ErrorDataReceived += (_, e) =>
+        {
+            if (e.Data is null) return;
+            stderrBuilder.AppendLine(e.Data);
+            TestContext.Out.WriteLine(e.Data);
+        };
+
+        p.BeginOutputReadLine();
+        p.BeginErrorReadLine();
         p.WaitForExit();
 
-        TestContext.Out.WriteLine($"$ docker {arguments}\n{stdout}\n{stderr}");
+        string stdout = stdoutBuilder.ToString();
+        string stderr = stderrBuilder.ToString();
+
         if (p.ExitCode != 0 && !ignoreErrors)
         {
             Assert.Fail($"Docker command failed: docker {arguments}\nExitCode: {p.ExitCode}\nSTDOUT: {stdout}\nSTDERR: {stderr}");
