@@ -14,6 +14,7 @@ namespace OpenTraceability.Tests.Events
     /// This is a test class for handling the basic building and using of events.
     /// </summary>
     [TestFixture]
+    [Category("UnitTest")]
     public class EPCISDocumentTests
     {
         /// <summary>

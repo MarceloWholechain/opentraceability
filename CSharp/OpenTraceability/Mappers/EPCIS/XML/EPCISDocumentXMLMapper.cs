@@ -56,7 +56,7 @@ namespace GS1.Mappers.EPCIS
             }
         }
 
-        public string Map(EPCISDocument doc)
+        public string Map(EPCISDocument doc, bool checkSchema = true)
         {
             if (doc.EPCISVersion == null)
             {
@@ -88,7 +88,10 @@ namespace GS1.Mappers.EPCIS
                 }
             }
 
-            EPCISDocumentBaseXMLMapper.ValidateEPCISDocumentSchema(xDoc, doc.EPCISVersion.Value);
+            if (checkSchema)
+            {
+                EPCISDocumentBaseXMLMapper.ValidateEPCISDocumentSchema(xDoc, doc.EPCISVersion.Value); 
+            }
 
             return xDoc.ToString();
         }
@@ -98,9 +101,9 @@ namespace GS1.Mappers.EPCIS
             return Task.FromResult(Map(strValue));
         }
 
-        public Task<string> MapAsync(EPCISDocument doc)
+        public Task<string> MapAsync(EPCISDocument doc, bool checkSchema = true)
         {
-            return Task.FromResult(Map(doc));
+            return Task.FromResult(Map(doc, checkSchema));
         }
     }
 }

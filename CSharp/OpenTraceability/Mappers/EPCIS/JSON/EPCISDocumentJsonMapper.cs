@@ -19,9 +19,9 @@ namespace OpenTraceability.Mappers.EPCIS.JSON
             return MapAsync(strValue).GetAwaiter().GetResult();
         }
 
-        public string Map(EPCISDocument doc)
+        public string Map(EPCISDocument doc, bool checkSchema = true)
         {
-            return MapAsync(doc).GetAwaiter().GetResult();
+            return MapAsync(doc, checkSchema).GetAwaiter().GetResult();
         }
 
         public async Task<EPCISDocument> MapAsync(string strValue)
@@ -64,7 +64,7 @@ namespace OpenTraceability.Mappers.EPCIS.JSON
             }
         }
 
-        public async Task<string> MapAsync(EPCISDocument doc)
+        public async Task<string> MapAsync(EPCISDocument doc, bool checkSchema = true)
         {
             if (doc.EPCISVersion != EPCISVersion.V2)
             {
@@ -114,8 +114,11 @@ namespace OpenTraceability.Mappers.EPCIS.JSON
             // conform the JSON-LD to the compacted version with CURIE's that EPCIS 2.0 likes
             EPCISDocumentBaseJsonMapper.ConformEPCISJsonLD(json, doc.Namespaces);
 
-            // validate the JSON-LD schema
-            await EPCISDocumentBaseJsonMapper.CheckSchemaAsync(json);
+            if (checkSchema)
+            {
+                // validate the JSON-LD schema
+                await EPCISDocumentBaseJsonMapper.CheckSchemaAsync(json); 
+            }
 
             return json.ToString(Newtonsoft.Json.Formatting.Indented);
         }

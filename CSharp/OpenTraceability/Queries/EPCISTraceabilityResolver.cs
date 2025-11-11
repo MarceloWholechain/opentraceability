@@ -10,6 +10,8 @@ using OpenTraceability.Mappers;
 using OpenTraceability.Models.Events;
 using OpenTraceability.Models.Identifiers;
 using OpenTraceability.Models.MasterData;
+using OpenTraceability.Queries.Diagnostics;
+using OpenTraceability.Queries.Diagnostics.Rules;
 using OpenTraceability.Utility;
 
 namespace OpenTraceability.Queries
@@ -25,15 +27,20 @@ namespace OpenTraceability.Queries
         /// </summary>
         /// <param name="options">Options for querying a digital link resolver.</param>
         /// <param name="epc">The EPC to include in the relative URL.</param>
+        /// <param name="client">The HTTP client to use to make the request.</param>
+        /// <param name="report">If this is not NULL, it will be used to track diagnostics information that can be used to debug the request.</param>
         /// <returns>The URI if it finds one, otherwise returns NULL.</returns>
-        public static async Task<Uri> GetEPCISQueryInterfaceURL(DigitalLinkQueryOptions options, EPC epc, HttpClient client)
+        public static async Task<Uri?> GetEPCISQueryInterfaceURL(DigitalLinkQueryOptions options, EPC epc, HttpClient client, DiagnosticsReport? report = null)
         {
+            // DIAGNOSTICS: Create a new request.
+            report?.NewRequest("Requesting EPCIS Query Interface URL (w/ EPC)", options);
+
             if (options.URL == null)
             {
                 throw new Exception("options.Uri is null on the DigitalLinkQueryOptions");
             }
 
-            string relativeUrl = null;
+            string? relativeUrl = null;
             switch (epc.Type)
             {
                 case EPCType.Class: relativeUrl = epc.GTIN?.ToDigitalLinkURL() + "/10/" + epc.SerialLotNumber; break;
@@ -56,10 +63,41 @@ namespace OpenTraceability.Queries
             // set accept to "application/json"
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+            // DIAGNOSTICS: Execute the rule to validate the Http Headers.   
+            if (report != null)
+            {
+                report.CurrentRequest.HttpRequest = request;
+                await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkHttpRequestRule>(request.Headers);
+            }
+
+            // Send the request.
             var response = await client.SendAsync(request);
+
+            // DIAGNOSTICS: Execute the rule to validate the Http Headers.   
+            if (report != null)
+            {
+                report.CurrentRequest.HttpResponse = response;
+                report.CurrentRequest.End = DateTime.UtcNow;
+                await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkHttpResponseRule>(response);
+            }
+
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
+
+                // DIAGNOSTICS: Execute the rule to validate the JSON.
+                if (report != null)
+                {
+                    report.CurrentRequest.ResponseBody = await response.Content.ReadAsStringAsync();
+                    await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkJsonSchemaRule>(json);
+                }
+
+                // DIAGNOSTICS: Execute the rule to validate a response was found.
+                if (report != null)
+                {
+                    await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkResponseFoundRule>(json);
+                }
+
                 var link = JsonConvert.DeserializeObject<List<DigitalLink>>(json)?.FirstOrDefault();
                 if (link != null)
                 {
@@ -75,9 +113,14 @@ namespace OpenTraceability.Queries
         /// </summary>
         /// <param name="options">Options for querying a digital link resolver.</param>
         /// <param name="pgln">The PGLN to include in the relative URL.</param>
+        /// <param name="client">The HTTP client to use to make the request.</param>
+        /// <param name="report">If this is not NULL, it will be used to track diagnostics information that can be used to debug the request.</param>
         /// <returns>The URI if it finds one, otherwise returns NULL.</returns>
-        public static async Task<Uri> GetEPCISQueryInterfaceURL(DigitalLinkQueryOptions options, PGLN pgln, HttpClient client)
+        public static async Task<Uri?> GetEPCISQueryInterfaceURL(DigitalLinkQueryOptions options, PGLN pgln, HttpClient client, DiagnosticsReport? report = null)
         {
+            // DIAGNOSTICS: Create a new request.
+            report?.NewRequest("Request EPCIS Query Interface URL (w/ PGLN)", options);
+
             if (options.URL == null)
             {
                 throw new Exception("options.Uri is null on the DigitalLinkQueryOptions");
@@ -98,10 +141,40 @@ namespace OpenTraceability.Queries
             // set accept to "application/json"
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+            // DIAGNOSTICS: Execute the rule to validate the Http Headers.   
+            if (report?.CurrentRequest != null)
+            {
+                report.CurrentRequest.HttpRequest = request;
+                await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkHttpRequestRule>(request.Headers);
+            }
+
             var response = await client.SendAsync(request);
+
+            // DIAGNOSTICS: Execute the rule to validate the Http Headers.   
+            if (report?.CurrentRequest != null)
+            {
+                report.CurrentRequest.HttpResponse = response;
+                report.CurrentRequest.End = DateTime.UtcNow;
+                await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkHttpResponseRule>(response);
+            }
+
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
+
+                // DIAGNOSTICS: Execute the rule to validate the JSON.
+                if (report?.CurrentRequest != null)
+                {
+                    report.CurrentRequest.ResponseBody = await response.Content.ReadAsStringAsync();
+                    await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkJsonSchemaRule>(json);
+                }
+
+                // DIAGNOSTICS: Execute the rule to validate a response was found.
+                if (report?.CurrentRequest != null)
+                {
+                    await report.CurrentRequest.ExecuteRuleAsync<DigitalLinkResponseFoundRule>(json);
+                }
+
                 var link = JsonConvert.DeserializeObject<List<DigitalLink>>(json)?.FirstOrDefault();
                 if (link != null)
                 {
@@ -117,8 +190,10 @@ namespace OpenTraceability.Queries
         /// </summary>
         /// <param name="options">Options for talking to the EPCIS Query Interface.</param>
         /// <param name="epc">The EPC to perform the traceback on.</param>
+        /// <param name="report">If this is not NULL, it will be used to track diagnostics information that can be used to debug the request.</param>
+        /// <returns>The URI if it finds one, otherwise returns NULL.</returns>
         /// <returns>The summarized EPCIS query results.</returns>
-        public static async Task<EPCISQueryResults> Traceback(EPCISQueryInterfaceOptions options, EPC epc, HttpClient client, EPCISQueryParameters additionalParameters = null)
+        public static async Task<EPCISQueryResults> Traceback(EPCISQueryInterfaceOptions options, EPC epc, HttpClient client, EPCISQueryParameters? additionalParameters = null, DiagnosticsReport? report = null)
         {
             HashSet<EPC> queried_epcs = new HashSet<EPC>() { epc };
 
@@ -129,7 +204,7 @@ namespace OpenTraceability.Queries
                 paramters.Merge(additionalParameters);
             }
 
-            var results = await QueryEvents(options, paramters, client);
+            var results = await QueryEvents(options, paramters, client, report);
 
             // if an error occured, lets stop here and return the results that we have
             if (results.Errors.Count() > 0)
@@ -167,7 +242,7 @@ namespace OpenTraceability.Queries
                     {
                         p.Merge(additionalParameters);
                     }
-                    var r = await QueryEvents(options, p, client);
+                    var r = await QueryEvents(options, p, client, report);
 
                     results.Merge(r);
 
@@ -232,7 +307,7 @@ namespace OpenTraceability.Queries
                         {
                             p.Merge(additionalParameters);
                         }
-                        var r = await QueryEvents(options, p, client);
+                        var r = await QueryEvents(options, p, client, report);
                         results.Merge(r);
                         queried_epcs.Add(parent_id);
                     }
@@ -251,9 +326,14 @@ namespace OpenTraceability.Queries
         /// provided.
         /// </summary>
         /// <param name="options">The options that power the request.</param>
+        /// <param name="report">If this is not NULL, it will be used to track diagnostics information that can be used to debug the request.</param>
+        /// <param name="enforceSchema">Whether to enforce strict schema validation. If false, parsing errors will be logged but not block processing.</param>
         /// <returns>EPCIS Query Results</returns>
-		public static async Task<EPCISQueryResults> QueryEvents(EPCISQueryInterfaceOptions options, EPCISQueryParameters parameters, HttpClient client)
+		public static async Task<EPCISQueryResults> QueryEvents(EPCISQueryInterfaceOptions options, EPCISQueryParameters parameters, HttpClient client, DiagnosticsReport? report = null)
         {
+            // DIAGNOSTICS: Create a new request.
+            report?.NewRequest("Query EPCIS Events", options);
+                                             
             // determine the mapper for deserialize the contents
             IEPCISQueryDocumentMapper mapper = OpenTraceabilityMappers.EPCISQueryDocument.JSON;
             if (options.Format == EPCISDataFormat.XML)
@@ -266,7 +346,7 @@ namespace OpenTraceability.Queries
             request.RequestUri = new Uri(options.URL?.ToString().TrimEnd('/') + "/events" + parameters.ToQueryParameters());
             request.Method = HttpMethod.Get;
 
-            if (options.Version == EPCISVersion.V1) 
+            if (options.Version == EPCISVersion.V1)
             {
                 request.Headers.Add("Accept", "application/xml");
                 request.Headers.Add("GS1-EPCIS-Version", "1.2");
@@ -296,33 +376,57 @@ namespace OpenTraceability.Queries
                 throw new Exception($"Unrecognized EPCISVersion {options.Version} on the options.");
             }
 
+            // ensure Host header is set BEFORE diagnostics rule executes so the rule does not report a missing host
+            if (request.RequestUri != null)
+            {
+                request.Headers.Host = request.RequestUri.Host;
+            }
+
+            // DIAGNOSTICS: Execute the rule to validate the HTTP request headers.
+            if (report != null)
+            {
+                report.CurrentRequest.HttpRequest = request;
+                await report.CurrentRequest.ExecuteRuleAsync<EPCISHttpRequestRule>(request.Headers, options.Version, options.Format);
+            }
+
             EPCISQueryResults results = new EPCISQueryResults();
 
             // execute the request
-            HttpResponseMessage response = null;
-            string responseBody = null;
+            HttpResponseMessage? response = null;
+            string? responseBody = null;
             try
             {
                 // calculate the host field for the request
-                string host = request.RequestUri.Host;
+                string host = request.RequestUri?.Host ?? "localhost";
                 request.Headers.Host = host;
 
                 response = await client.SendAsync(request);
                 responseBody = await response.Content.ReadAsStringAsync();
+
+                // DIAGNOSTICS: Execute the rule to validate the HTTP response.
+                if (report != null)
+                {
+                    report.CurrentRequest.HttpResponse = response;
+                    report.CurrentRequest.End = DateTime.UtcNow;
+                    await report.CurrentRequest.ExecuteRuleAsync<EPCISHttpResponseRule>(response);
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
-                    try
+                    // DIAGNOSTICS: Execute the rule to validate the response schema.
+                    if (report != null && responseBody != null)
                     {
-                        var doc = mapper.Map(responseBody);
-                        results.Document = doc;
+                        report.CurrentRequest.ResponseBody = responseBody;
+                        await report.CurrentRequest.ExecuteRuleAsync<EPCISResponseSchemaRule>(responseBody, options.Format, options.Version);
                     }
-                    catch (OpenTraceabilitySchemaException schemaEx)
+
+                    var doc = mapper.Map(responseBody ?? string.Empty, false);
+                    results.Document = doc;
+
+                    // DIAGNOSTICS: Execute the rule to validate for duplicate event IDs.
+                    if (report != null && doc != null)
                     {
-                        results.Errors.Add(new EPCISQueryError()
-                        {
-                            Type = EPCISQueryErrorType.Schema,
-                            Details = schemaEx.Message
-                        });
+                        await report.CurrentRequest.ExecuteRuleAsync<EPCISDuplicateEventIDsRule>(doc);
                     }
                 }
                 else
@@ -349,11 +453,11 @@ namespace OpenTraceability.Queries
             {
                 EPCISQueryStackTraceItem item = new EPCISQueryStackTraceItem()
                 {
-                    RelativeURL = request.RequestUri,
+                    RelativeURL = request.RequestUri!,
                     RequestHeaders = request.Headers.ToList(),
                     ResponseStatusCode = response?.StatusCode,
-                    ResponseBody = responseBody,
-                    ResponseHeaders = response?.Headers.ToList()
+                    ResponseBody = responseBody ?? string.Empty,
+                    ResponseHeaders = response?.Headers?.ToList() ?? new List<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>>()
                 };
 
                 results.StackTrace.Add(item);

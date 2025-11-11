@@ -31,13 +31,13 @@ namespace OpenTraceability.Interfaces
         /// </summary>
         /// <param name="doc">The EPCIS Document to map into the string value.</param>
         /// <returns>A string value representing the EPCIS document.</returns>
-        string Map(EPCISDocument doc);
+        string Map(EPCISDocument doc, bool checkSchema = true);
 
         /// <summary>
         /// Maps an EPCIS document into a string value.
         /// </summary>
         /// <param name="doc">The EPCIS Document to map into the string value.</param>
         /// <returns>A string value representing the EPCIS document.</returns>
-        Task<string> MapAsync(EPCISDocument doc);
+        Task<string> MapAsync(EPCISDocument doc, bool checkSchema = true);
     }
 }

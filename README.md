@@ -12,6 +12,14 @@ These open-source libraries would not be possible without great organizations wh
 In version 1.4, the OpenTraceability C# project was updated to target the .Net Standard 2.0 framework. This update provides support for .NET Framework versions 4.6.1 and greater while maintaining support for .NET and .NET Core 2.0+. This allows .NET framework projects to consume the OpenTraceability nuget package while preserving support for later versions of .NET such as .NET 5 and greater.
 - Added support for .Net Standard 2.0
 
+### Version 1.5
+In version 1.5, the OpenTraceability C# project was updated to have the Diagnostics support in the C# SDK as well as the DiagnosticsTool as a deployable docker container to be used for debugging the interoperable exchange of traceability data. Additionally, a new JSON schema support has been added.
+- Added in diagnostics support into the `OpenTraceability` C# package.
+- Added in the `DiagnosticsTool` that is a deployable ASP.NET docker container with minor server-sided blazor UI support.
+- Added in the GDST JSON schema with support to call this JSON schema from both Java and C# packages.
+- Added in the Digital Link JSON schema with support call this package from the C# packages (Java support coming soon).
+- Added in deployment of diagnostics tool to docker hub.
+
 ## Current Supported Programming Languages / Frameworks
 We currently support the following:
 - C#

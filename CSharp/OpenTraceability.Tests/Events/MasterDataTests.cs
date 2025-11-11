@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace OpenTraceability.Tests.Events
 {
     [TestFixture]
+    [Category("UnitTest")]
     public class MasterDataTests
     {
         [Test]

@@ -12,6 +12,7 @@ using System.Xml.Linq;
 namespace OpenTraceability.Tests.Events
 {
     [TestFixture]
+    [Category("UnitTest")]
     public class EPCISQueryDocumentTests
     {
         /// <summary>
@@ -171,7 +172,7 @@ namespace OpenTraceability.Tests.Events
             EPCISQueryDocument doc = OpenTraceabilityMappers.EPCISQueryDocument.JSON.Map(json);
 
             // assert that we have master data
-            Assert.IsTrue(doc.MasterData.Count > 0);
+            Assert.That(doc.MasterData.Count > 0, Is.True);
 
             // serialize C# models into xml
             string jsonAfter = OpenTraceabilityMappers.EPCISQueryDocument.JSON.Map(doc);
@@ -209,13 +210,13 @@ namespace OpenTraceability.Tests.Events
 
             // map the document to xml
             string xml = OpenTraceabilityMappers.EPCISQueryDocument.XML.Map(doc);
-            Assert.IsFalse(string.IsNullOrEmpty(xml));
+            Assert.That(string.IsNullOrEmpty(xml), Is.False);
 
             EPCISQueryDocument docAfter = OpenTraceabilityMappers.EPCISQueryDocument.XML.Map(xml);
-            Assert.IsNotNull(docAfter);
+            Assert.That(docAfter, Is.Not.Null);
 
             string jsonAfter = OpenTraceabilityMappers.EPCISQueryDocument.JSON.Map(docAfter);
-            Assert.IsFalse(string.IsNullOrEmpty(jsonAfter));
+            Assert.That(string.IsNullOrEmpty(jsonAfter), Is.False);
         }
     }
 }
